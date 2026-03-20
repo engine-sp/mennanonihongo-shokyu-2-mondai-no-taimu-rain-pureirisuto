@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大家的日本語 初級Ⅱ 改訂版 線上音檔閱聽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body::before,body::after{
+            content: "";
+            display: block;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        body::after{
+            backdrop-filter: blur(10px);
+            background-color: rgba(243 244 246 / 0.5);
+        }*/
+
+        /*ios fix*/
+        .content-container {
+            position: relative; /* Ensure content appears above the background */
+            z-index: 1;
+            /* Add your content styles */
+        }
+        .fixed-background-container,.fixed-background-container-after{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .fixed-background-container {
+            background-image: url("https://www.dahhsin.com.tw/uploadfile/fileproduct_list/P1509250001603a/PRDPIC/650_45_d3b01f445174d939e5d5bf0e6dc26a30_1753745535.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            z-index: -1; /* Place it behind other content */
+        }
+        .fixed-background-container-after{
+            backdrop-filter: blur(10px);
+            background-color: rgba(243 244 246 / 0.5);
+        }
+        .text-effR3Df{
+            position: relative;
+            z-index: 2;
+        }
+        .text-linear-Ae3z{
+            background: linear-gradient(to left,
+            #a8aaa7, #d5d7d6, #fff, #d5d7d6, #a8aaa7);
+            background: -webkit-linear-gradient(to left,
+            #a8aaa7, #d5d7d6, #fff, #d5d7d6, #a8aaa7);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .text-effR4Df{
+            text-shadow: 0 3px 5px #777,0 2px 2px #555,0 0 1px #444;
+            z-index: 1;
+            position: absolute;
+            margin:auto;
+            left:0;right:0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="content-container"><div class="fixed-background-container"></div><div class="fixed-background-container-after"></div></div>
+    <div id="container" class="max-w-md mx-auto my-8 p-6 pb-24 bg-white rounded-lg shadow-md relative">
+        <h1 class="text-3xl text-center font-black mb-6 border-b pb-4 relative"><span class="text-effR4Df js-cloneText" data-text="大家的日本語 初級Ⅱ 改訂版 線上音檔閱聽"></span><span class="text-effR3Df"><span class="text-linear-Ae3z">大家的日本語 初級Ⅱ 改訂版</span><br/><span class="text-linear-Ae3z">線上音檔閱聽</span></span></h1>
+        <div class="text-center">
+            <div class="inline-block text-left">
+                <p class="mb-2 text-sm font-medium">本頁面資料引用自「<a class="text-blue-600" href="https://www.dahhsin.com.tw/bookIntro.php?lv01_type=Japan-s01&prd_id=E161">大家的日本語 初級Ⅱ 改訂版</a>」提供的<a class="text-blue-600" href="https://www.dahhsin.com.tw/bookIntro_vw01.php?vw01_type=voice&prod_serialid=P1509250001603a">線上音檔</a>所提供的部分，由於每個音檔有很多問題可以聽，但如果要單題重覆閱聽就不是很方便。</p>
+                <p class="mb-2 text-sm font-medium">為了改善此狀況，就以人工方式，依照時間軸逐題建立列表，這樣就能方便單題重覆閱聽。</p>
+                <p class="mb-5 text-sm font-medium">需要注意的是，音檔來源自<a class="text-blue-600" href="https://www.dahhsin.com.tw/">大新書局官方網站</a>，如果官方網站更動了音檔，則此列表就可能會失效或不準確。</p>
+            </div>
+        </div>
+        
+        <div id="playlist"></div>
+		<footer>
+		     <h2 class="text-xl font-bold text-gray-400 py-3">前往其他課程</h2>
+			<menu>
+				<li><a href="https://engine-sp.github.io/mennanonihongo-shokyu1-mondai-no-taimu-rain-pureirisuto/" class="w-20 text-center px-3 py-1 text-sm font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded-md hover:bg-green-50 hover:text-blue-600 hover:border-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-all">←初級Ⅰ</a></li>
+			</menu>
+		</footer>
+    </div>
+
+    <audio id="audio-player" controls class="fixed bottom-0 left-0 w-full bg-gray-100/80 backdrop-blur-sm p-3 border-t border-gray-200 shadow-t-lg z-50"></audio>
+
+    <script src="question.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audioPlayer = document.getElementById('audio-player');
+            const playlistContainer = document.getElementById('playlist');
+            let currentEndTime = 0;
+            let currentStartTime = 0;
+
+            const lessons = questions.reduce((acc, q) => {
+                const match = q.title.match(/第(.+?)課/);
+                if (match) {
+                    const lessonNum = match[1];
+                    if (!acc[lessonNum]) {
+                        acc[lessonNum] = [];
+                    }
+                    acc[lessonNum].push(q);
+                }
+                return acc;
+            }, {});
+
+            const lessonNumbers = Object.keys(lessons);
+
+            // 建立播放列表
+            lessonNumbers.forEach((lessonNum, lessonIndex) => {
+                const lessonQuestions = lessons[lessonNum];
+                const lessonDiv = document.createElement('div');
+                lessonDiv.className = 'mb-4 border rounded-lg overflow-hidden bg-gray-50/50';
+                lessonDiv.id = `l${lessonIndex + 1}`;
+
+                // 課程標題 (摺疊觸發器)
+                const lessonHeader = document.createElement('div');
+                lessonHeader.className = 'flex items-center justify-between p-4 bg-white cursor-pointer hover:bg-blue-50 transition-colors duration-200';
+                
+                const lessonTitle = document.createElement('h2');
+                lessonTitle.className = 'text-xl font-bold text-gray-700';
+                lessonTitle.textContent = `第${lessonNum}課`;
+
+                const arrowIcon = document.createElement('span');
+                arrowIcon.innerHTML = '▼';
+                arrowIcon.className = 'text-gray-400 transform transition-transform duration-200';
+                
+                lessonHeader.appendChild(lessonTitle);
+                lessonHeader.appendChild(arrowIcon);
+                lessonDiv.appendChild(lessonHeader);
+
+                // 內容容器 (預設隱藏)
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'hidden p-4 space-y-6 bg-white border-t';
+
+                lessonQuestions.forEach((lesson) => {
+                    const questionsContainer = document.createElement('div');
+                    questionsContainer.className = 'space-y-2';
+
+                    const subQuestionTitle = document.createElement('h3');
+                    subQuestionTitle.className = 'text-lg font-medium text-gray-600 border-l-4 border-emerald-700 pl-2 mb-3';
+                    subQuestionTitle.textContent = lesson.title;
+                    questionsContainer.appendChild(subQuestionTitle);
+
+                    lesson.questions.forEach(subQuestion => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-200';
+
+                        const titleSpan = document.createElement('span');
+                        titleSpan.className = 'text-gray-800';
+                        titleSpan.textContent = subQuestion.title;
+
+                        const playButton = document.createElement('button');
+                        playButton.className = 'w-20 text-center px-3 py-1 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-all';
+                        playButton.textContent = '▶ Play';
+                        playButton.onclick = (e) => {
+                            e.stopPropagation(); // 防止觸發摺疊
+                            playSegment(lesson.url, subQuestion.startTime, subQuestion.endTime);
+                        };
+
+                        itemDiv.appendChild(titleSpan);
+                        itemDiv.appendChild(playButton);
+                        questionsContainer.appendChild(itemDiv);
+                    });
+                    contentWrapper.appendChild(questionsContainer);
+                });
+
+                lessonDiv.appendChild(contentWrapper);
+                playlistContainer.appendChild(lessonDiv);
+
+                // 點擊事件：切換摺疊狀態
+                lessonHeader.onclick = () => {
+                    const isHidden = contentWrapper.classList.contains('hidden');
+                    
+                    // 關閉所有其他的
+                    document.querySelectorAll('#playlist > div > div:nth-child(2)').forEach(el => {
+                        el.classList.add('hidden');
+                        el.previousElementSibling.querySelector('span').style.transform = 'rotate(0deg)';
+                    });
+
+                    // 如果原本是隱藏的，則開啟它
+                    if (isHidden) {
+                        contentWrapper.classList.remove('hidden');
+                        arrowIcon.style.transform = 'rotate(180deg)';
+                        // 平滑捲動到當前課
+                        setTimeout(() => {
+                            lessonDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    }
+                };
+            });
+
+            function playSegment(url, startTime, endTime) {
+                if (audioPlayer.currentSrc.indexOf(encodeURI(url)) === -1) {
+                    audioPlayer.src = url;
+                }
+                
+                currentStartTime = startTime;
+                currentEndTime = endTime;
+
+                audioPlayer.currentTime = startTime;
+                audioPlayer.play();
+            }
+
+            audioPlayer.addEventListener('timeupdate', () => {
+                if (currentEndTime > 0 && audioPlayer.currentTime >= currentEndTime) {
+                    audioPlayer.pause();
+                    audioPlayer.currentTime = currentStartTime;
+                    currentEndTime = 0;
+                }
+            });
+
+            //標題陰影效果
+            const cloneText=document.querySelector(".js-cloneText");
+            cloneText.innerHTML=cloneText.dataset.text;
+        });
+    </script>
+    <script src="dev-tools.js"></script>
+</body>
+</html>
